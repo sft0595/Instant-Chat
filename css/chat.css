@@ -1,0 +1,97 @@
+* {
+    box-sizing: border-box!important;
+    text-align: center;
+    font-family: 'Raleway', sans-serif!important;
+    font-size: 16px;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background-color: #fff;
+}
+
+form {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.window {
+    max-width: 600px!important;
+}
+
+textarea {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    display: block;
+    border: 0;
+    padding: 10px;
+    font-size: 14px;
+    text-align: left!important;
+    background-color: #eee;
+    color: #666;
+    cursor: default;
+}
+
+input[type="text"] {
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    margin: 5px 0;
+    border: 0;
+    border-bottom: 3px solid #1c1c1c;
+}
+
+input[type="submit"] {
+    padding: 10px 20px;
+    margin-bottom: 5px;
+    color: #1c1c1c;
+    text-transform: uppercase;
+    background-color: transparent;
+    border: 1px solid #1c1c1c;
+    outline: 0;
+    outline-offset: 0;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #1c1c1c;
+}
+
+.replyText {
+    border-bottom: 3px solid dodgerblue!important;
+    margin-top: 0!important;
+}
+
+.Reply {
+    border: 1px solid dodgerblue!important;
+    background-color: dodgerblue!important;
+    color: #fff!important;
+}
+
+.danger {
+    border: 0px!important;
+    background-color: transparent!important;
+    color: #666!important;
+    padding: 0 !important;
+    margin-top: 5px !important;
+}
+
+.danger:hover {
+    color: tomato!important;
+}
+
+p.error {
+    color: tomato;
+    text-transform: uppercase;
+    font-weight: 300;
+}
+
+h2 {
+    font-size: 25px;
+    font-weight: 300;
+    color: dodgerblue;
+}
