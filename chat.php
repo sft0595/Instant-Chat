@@ -1,10 +1,11 @@
 <?php
 session_start();
-$users = array('simam','shafayet');
+if(isset($_SESSION['nickName']) && !empty($_SESSION['nickName'])){
+    $person = $_SESSION['nickName'];
+}
 if(isset($_POST['replyText']) && !empty($_POST['replyText']) && !empty($_SESSION['nickName'])){
     $reply = $_POST['replyText'];
-    $userName = $_SESSION['nickName'];
-    $text = "$userName : $reply";
+    $text = "$person : $reply";
     $fileResource = fopen("chatHistory.txt","a+");
     fwrite($fileResource,"$text\n");
     fclose($fileResource);
@@ -18,49 +19,39 @@ if(isset($_POST['replyText']) && !empty($_POST['replyText']) && !empty($_SESSION
     <link href="css/chat.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 </head>
-
 <body>
 <?php 
 if(!isset($_POST['nickName']) && empty($_SESSION['nickName'])){
 ?>
-<h2>Welcome to Private chat</h2>  
     <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST">
+    <h2>Welcome to Private chat</h2>  
         <input type="text" name="nickName" placeholder="User Name">
-        <input type="submit" value="submit">
+        <input type="submit" value="submit" id="send">
     </form>
 
 <?php }elseif(isset($_POST['nickName'])){
 
-$user = $_POST['nickName'];
-if(empty($user)){
+$person = $_POST['nickName'];
+if(empty($person)){?>
+    <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST">
+    <?php
     echo "<h2>Welcome to Private chat</h2>";
     echo "<p class=\"error\">User Name can not be empty</p>";
     ?>
-
-    <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST">
         <input type="text" name="nickName" placeholder="User Name">
-        <input type="submit" value="submit">
+        <input type="submit" value="submit" id="send">
     </form>
 <?php
 }else{
-    if(!in_array($user,$users)){
-    echo "<p class=\"error\">You are not an User</p>";?>
-    <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST">
-        <input type="text" name="nickName" placeholder="User Name">
-        <input type="submit" value="submit">
-    </form>
-<?php
-    }else{
-        $_SESSION['nickName'] = $user;
-}
+    $_SESSION['nickName'] = $person;
 }
 }
 if(!isset($_POST['destroyChat']) && !isset($_POST['logOut']) && isset($_SESSION['nickName']) && !empty($_SESSION['nickName'])){
-    $userName = $_SESSION['nickName'];
-        echo "<h2>$userName's window</h2>";
         ?>
         <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" class="window">
-            <textarea rows="10" placeholder="No Conversation to show" readonly><?php 
+        <?php echo "<h3><span></span>$person's window</h3>";?>
+        <div id="notify"></div>
+        <textarea rows="10" placeholder="No Conversation to show" id="display" disabled readonly><?php 
            $fileSize = filesize("chatHistory.txt");
             if($fileSize>0){
             $fileResource = fopen("chatHistory.txt","r+"); 
@@ -69,24 +60,45 @@ if(!isset($_POST['destroyChat']) && !isset($_POST['logOut']) && isset($_SESSION[
             }
            ?></textarea>
             <input type="text" name="replyText" class="replyText" placeholder="Type your reply">
-            <input type="submit"  value="Reply" class="Reply">
-        </form>
-        <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post"> 
+            <input type="submit"  value="►" class="Reply">
             <input type="submit" name="logOut" value="Log Off" class="danger">
-        </form>
-        <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post"> 
-            <input type="submit" name="destroyChat" value="Clear History" class="danger">
+            <input type="submit" name="destroyChat" value="Clear History" class="danger"> 
         </form>
     <?php }
     if(isset($_POST['logOut']) && !empty($_SESSION['nickName'])){
     unset($_SESSION['nickName']);
-    echo "<p>Logged off successfully! to log back in <a href=\"chat.php\"> Click Me<a></p>";
+    header("location: chat.php");
     }
     if(isset($_POST['destroyChat']) && !empty($_SESSION['nickName'])){
     file_put_contents("chatHistory.txt", "");
-    echo "<p>chat history successfully destroyed !! to go back<a href=\"chat.php\"> Click Me<a></p>";
+    header("location: chat.php");
     }
     ?>
 
 </body>
+<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+
+<script>
+var fileBefore = "";
+var textarea = document.getElementById("display");
+textarea.scrollTop = textarea.scrollHeight;
+$(document).ready(function(){
+setInterval(function() {
+    var ajax = new XMLHttpRequest();
+    ajax.onreadystatechange = function() {
+        if (ajax.readyState == 4) {
+            if (ajax.responseText != fileBefore) {
+                fileBefore = ajax.responseText;
+                $('#display').load("chatHistory.txt");
+                if(ajax.readyState == 4 && textarea.scrollTop+237 < textarea.scrollHeight){
+                    $('#notify').html("new message").fadeIn('fast').delay(1500).fadeOut('slow');
+                }
+        }
+    }
+    };
+    ajax.open("POST", "chatHistory.txt", true); //Use POST to avoid caching
+    ajax.send();
+}, 1000);
+});
+</script>
 </html>
